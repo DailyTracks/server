@@ -23,15 +23,9 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    latitude: {
-      type: DataTypes.DECIMAL(10,8),
-      allowNull: true,
-      comment: "위도"
-    },
-    longitude: {
-      type: DataTypes.DECIMAL(11,8),
-      allowNull: true,
-      comment: "경도"
+    region: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     }
   }, {
     sequelize,
