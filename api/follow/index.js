@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const user = require("./user/index");
-const follow = require("./follow/index");
 const auth = require("./auth/index");
 const post = require("./board/index");
 const search = require("./search/index");
@@ -10,5 +9,5 @@ router.use("/auth", auth);
 router.use("/board", post);
 router.use("/comment", comment);
 router.use("/search", search);
-router.use("/follow", follow);
+
 module.exports = router;
