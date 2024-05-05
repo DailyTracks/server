@@ -1,0 +1,34 @@
+const { comments } = require("../models");
+
+class CommentService {
+  async getComments(boardId) {
+    try {
+      const _comments = await comments.findAll({
+        where: {
+          board_id: boardId,
+        },
+      });
+      return _comments;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async createComment(comment) {
+    try {
+      const _comment = await comments.create(comment);
+      return _comment;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async updateComment(comment) {
+    try {
+      const _comment = await comments.update(comment);
+      return _comment;
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+module.exports = new CommentService();
