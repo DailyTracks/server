@@ -1,8 +1,8 @@
 const { boards } = require("../models/index");
 class BoardService {
   async getBoards() {
-    const boards = await boards.findAll();
-    return boards;
+    const foundBoards = await boards.findAll();
+    return foundBoards;
   }
   async getBoardById(id) {
     const board = await boards.findOne({ where: { id } });
