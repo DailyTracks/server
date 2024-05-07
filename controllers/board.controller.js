@@ -16,7 +16,7 @@ class BoardController {
   async getBoard(req, res, next) {
     try {
       const id = req.params.id;
-      const board = await boardService.getBoard(id);
+      const board = await boardService.getBoardById(id);
       res.status(200).json(board);
     } catch (err) {
       next(err);

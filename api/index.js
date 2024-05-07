@@ -9,6 +9,9 @@ router.use("/user", user);
 router.use("/auth", auth);
 router.use("/board", board);
 router.use("/comment", comment);
+router.get("/test", (req, res, next) => {
+  res.json(req.user);
+});
 // router.use("/search", search);
 // router.use("/follow", follow);
 module.exports = router;

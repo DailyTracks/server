@@ -39,6 +39,13 @@ class UserService {
     const rootUserId = await this.findRoot(userId);
     const followers = await follows.findAll({
       where: { followee_id: rootUserId },
+
+      include: {
+        model: users,
+        as: "follower",
+
+        attributes: ["id", "username", "email"],
+      },
     });
     return followers;
   }
@@ -47,6 +54,11 @@ class UserService {
     const rootUserId = await this.findRoot(userId);
     const following = await follows.findAll({
       where: { follower_id: rootUserId },
+      include: {
+        model: users,
+        as: "followee",
+        attributes: ["id", "username", "email"],
+      },
     });
     return following;
   }

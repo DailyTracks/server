@@ -12,6 +12,10 @@ app.use(
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      //1hour about expire time
+      maxAge: 1000 * 60 * 60,
+    },
   })
 );
 

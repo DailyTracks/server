@@ -10,16 +10,16 @@ function initModels(sequelize) {
   var follows = _follows(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
-  comments.belongsTo(boards, { as: "board", foreignKey: "board_id"});
-  boards.hasMany(comments, { as: "comments", foreignKey: "board_id"});
-  boards.belongsTo(users, { as: "user", foreignKey: "user_id"});
-  users.hasMany(boards, { as: "boards", foreignKey: "user_id"});
-  comments.belongsTo(users, { as: "user", foreignKey: "user_id"});
-  users.hasMany(comments, { as: "comments", foreignKey: "user_id"});
-  follows.belongsTo(users, { as: "follower", foreignKey: "follower_id"});
-  users.hasMany(follows, { as: "follows", foreignKey: "follower_id"});
-  follows.belongsTo(users, { as: "followee", foreignKey: "followee_id"});
-  users.hasMany(follows, { as: "followee_follows", foreignKey: "followee_id"});
+  comments.belongsTo(boards, { as: "board", foreignKey: "board_id" });
+  boards.hasMany(comments, { as: "comments", foreignKey: "board_id" });
+  boards.belongsTo(users, { as: "user", foreignKey: "user_id" });
+  users.hasMany(boards, { as: "boards", foreignKey: "user_id" });
+  comments.belongsTo(users, { as: "user", foreignKey: "user_id" });
+  users.hasMany(comments, { as: "comments", foreignKey: "user_id" });
+  follows.belongsTo(users, { as: "follower", foreignKey: "follower_id" });
+  users.hasMany(follows, { as: "follows", foreignKey: "follower_id" });
+  follows.belongsTo(users, { as: "followee", foreignKey: "followee_id" });
+  users.hasMany(follows, { as: "followee_follows", foreignKey: "followee_id" });
 
   return {
     boards,

@@ -1,6 +1,7 @@
 const dbConfig = require("../configs/db.config");
 const initModels = require("./init-models"); // init-models.js에서 메서드를 가져온다.
 const { Sequelize } = require("sequelize");
+const users = require("./users");
 
 // config/config.json 파일에 있는 설정값들을 불러온다.
 // config객체의 env변수(development)키 의 객체값들을 불러온다.
@@ -16,5 +17,4 @@ const sequelize = new Sequelize(
 
 // 모델과 테이블간의 관계가 맺어진다.
 const models = initModels(sequelize);
-
 module.exports = models;

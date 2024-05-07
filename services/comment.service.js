@@ -30,5 +30,13 @@ class CommentService {
       throw err;
     }
   }
+  async deleteComment(id) {
+    try {
+      const _comment = await comments.destroy({ where: { id } });
+      return _comment;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 module.exports = new CommentService();

@@ -1,11 +1,25 @@
-const { boards } = require("../models/index");
+const { boards, comments, users } = require("../models/index");
 class BoardService {
   async getBoards() {
     const foundBoards = await boards.findAll();
     return foundBoards;
   }
   async getBoardById(id) {
-    const board = await boards.findOne({ where: { id } });
+    const board = await boards.findOne({
+      where: { id },
+      include: [
+        {
+          model: comments,
+          as: "comments",
+          attributes: ["id", "user_id", "content", "createdAt"],
+          include: {
+            model: users,
+            as: "user",
+            attributes: ["username"],
+          },
+        },
+      ],
+    });
     return board;
   }
   async getBoardByLocation(region) {

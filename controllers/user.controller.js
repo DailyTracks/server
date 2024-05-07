@@ -49,7 +49,7 @@ class UserController {
   async followUser(req, res, next) {
     try {
       const userId = req.params.id;
-      const targetUserId = req.body.targetUserId;
+      const targetUserId = req.query.targetUserId;
       await userService.followUser(userId, targetUserId);
       res.status(200).send("Successfully followed user.");
     } catch (err) {
@@ -60,7 +60,7 @@ class UserController {
   async unFollowUser(req, res, next) {
     try {
       const userId = req.params.id;
-      const targetUserId = req.body.targetUserId;
+      const targetUserId = req.query.targetUserId;
       await userService.unFollowUser(userId, targetUserId);
       res.status(200).send("Successfully unfollowed user.");
     } catch (err) {
