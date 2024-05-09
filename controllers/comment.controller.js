@@ -4,6 +4,7 @@ class CommentController {
   async getComments(req, res, next) {
     try {
       const boardId = req.query.boardId;
+      console.log(boardId);
       const comments = await commentService.getComments(boardId);
       res.status(200).json(comments);
     } catch (err) {
