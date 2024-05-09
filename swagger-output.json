@@ -11,6 +11,16 @@
     "http"
   ],
   "paths": {
+    "/test": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/user/": {
       "get": {
         "description": "",
@@ -75,6 +85,126 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/{id}/following": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/{id}/follower": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/{id}/follow": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "targetUserId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "targetUserId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/login/callback": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/login/kakao": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/login/kakao/callback": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }
@@ -217,6 +347,52 @@
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/chat/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/chat/{roomId}/messages": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/chat/{targetId}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "targetId",
             "in": "path",
             "required": true,
             "type": "string"
