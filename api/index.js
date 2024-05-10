@@ -6,12 +6,13 @@ const board = require("./board/index");
 // const search = require("./search/index");
 const comment = require("./comment/index");
 const chat = require("./chat/index");
+const guardMiddleware = require("../middlewares/guard.middleware");
 router.use("/user", user);
 router.use("/auth", auth);
 router.use("/board", board);
 router.use("/comment", comment);
 router.use("/chat", chat);
-router.get("/test", (req, res, next) => {
+router.get("/test", guardMiddleware, (req, res, next) => {
   res.json(req.user);
 });
 

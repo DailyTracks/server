@@ -27,13 +27,17 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-router.get("/login", passport.authenticate("naver", { authType: "reprompt" }));
 router.get(
-  "/login/callback",
+  "/login/naver",
+  passport.authenticate("naver", { authType: "reprompt" })
+);
+router.get(
+  "/login/naver/callback",
   passport.authenticate("naver", { failureRedirect: "/" }),
   (req, res) => {
     // 로그인 성공 후 리다이렉트할 페이지로 React 클라이언트 주소를 전달합니다.
-    res.redirect(`http://localhost:3000`);
+
+    res.json({ redirectUrl: "http://localhost:3000", user: req.user });
   }
 );
 
@@ -46,7 +50,8 @@ router.get(
   passport.authenticate("kakao", { failureRedirect: "/" }),
   (req, res) => {
     // 로그인 성공 후 리다이렉트할 페이지로 React 클라이언트 주소를 전달합니다.
-    res.redirect(`http://localhost:3000`);
+
+    res.json({ redirectUrl: "http://localhost:3000", user: req.user });
   }
 );
 module.exports = router;
