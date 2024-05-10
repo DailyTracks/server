@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 let io;
 /** TODO: TRY-CATCH 로 안꺼지게 */
-/** TODO: REDIS pub sub --> BATCH */
+/** TODO: REDIS 로 MQ 구성 후 --> BATCH */
 const init = (server) => {
   io = socketIo(server);
 
