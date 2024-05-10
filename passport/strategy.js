@@ -1,3 +1,5 @@
+const { users } = require("../models");
+
 const NaverStrategy = require("passport-naver-v2").Strategy;
 const KakaoStrategy = require("passport-kakao").Strategy;
 
@@ -8,9 +10,11 @@ module.exports = {
       callbackURL: "http://localhost:8080/api/auth/login/kakao/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
       const id = profile._json.id;
       const provider = profile.provider;
       const name = profile._json.kakao_account.name;
+      const email = profile._json.kakao_account.email;
       const user = await users.findOne({
         where: { oauth_provider: provider, oauth_id: id },
       });
@@ -32,9 +36,10 @@ module.exports = {
     {
       clientID: "YrRexsBUtY3GwezYfvpX",
       clientSecret: "OOpNaPgjXX",
-      callbackURL: "http://localhost:8080/api/auth/login/callback",
+      callbackURL: "http://localhost:8080/api/auth/login/naver/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
       const { provider, id, email, name } = profile;
       const user = await users.findOne({
         where: { oauth_provider: provider, oauth_id: id },
@@ -42,6 +47,7 @@ module.exports = {
       if (user) {
         return done(null, user);
       }
+
       const newUser = await users.create({
         oauth_provider: provider,
         oauth_id: id,
