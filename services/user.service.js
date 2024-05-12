@@ -1,4 +1,4 @@
-const { users, follows } = require("../models/index");
+const { users, follows, profiles } = require("../models/index");
 
 class UserService {
   async getUsers() {

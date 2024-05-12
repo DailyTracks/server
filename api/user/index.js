@@ -1,14 +1,15 @@
 const userController = require("../../controllers/user.controller");
 
 const router = require("express").Router();
-
+const profileIndex = require("./profile/index");
 router.get("/", userController.getUsers);
 router.get("/:id", userController.getUser);
 router.get("/:id/following", userController.getFollowing);
 router.get("/:id/follower", userController.getFollower);
 
 router.post("/:id/follow", userController.followUser);
-router.post("/", userController.createUser);
+// /** user를 만들 때 create 로 만들어야함. */
+// router.post("/", userController.createUser);
 router.put("/:id", userController.updateUser);
 router.delete("/:id", userController.deleteUser);
 router.delete("/:id/follow", userController.unFollowUser);
@@ -29,4 +30,6 @@ router.delete("/:id/follow", userController.unFollowUser);
 ]
 TODO: join 으로 구성해야함.
  */
+/** user's profile */
+router.use("/:id/profile", profileIndex);
 module.exports = router;

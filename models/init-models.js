@@ -4,6 +4,7 @@ var _chatrooms = require("./chatrooms");
 var _comments = require("./comments");
 var _follows = require("./follows");
 var _messages = require("./messages");
+var _profiles = require("./profiles");
 var _users = require("./users");
 
 function initModels(sequelize) {
@@ -12,6 +13,7 @@ function initModels(sequelize) {
   var comments = _comments(sequelize, DataTypes);
   var follows = _follows(sequelize, DataTypes);
   var messages = _messages(sequelize, DataTypes);
+  var profiles = _profiles(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
   comments.belongsTo(boards, { as: "board", foreignKey: "board_id"});
@@ -32,6 +34,8 @@ function initModels(sequelize) {
   users.hasMany(follows, { as: "followee_follows", foreignKey: "followee_id"});
   messages.belongsTo(users, { as: "writer_user", foreignKey: "writer"});
   users.hasMany(messages, { as: "messages", foreignKey: "writer"});
+  profiles.belongsTo(users, { as: "id_user", foreignKey: "id"});
+  users.hasMany(profiles, { as: "profiles", foreignKey: "id"});
 
   return {
     boards,
@@ -39,6 +43,7 @@ function initModels(sequelize) {
     comments,
     follows,
     messages,
+    profiles,
     users,
   };
 }

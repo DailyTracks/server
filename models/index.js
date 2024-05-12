@@ -12,7 +12,11 @@ const sequelize = new Sequelize(
   dbConfig.database,
   dbConfig.username,
   dbConfig.password,
-  dbConfig
+  {
+    ...dbConfig,
+    /**login 처리 부분 */
+    // logging: false,
+  }
 );
 
 // 모델과 테이블간의 관계가 맺어진다.

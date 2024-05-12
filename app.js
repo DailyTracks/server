@@ -6,7 +6,12 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output");
 const session = require("express-session");
 const passport = require("passport");
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // 클라이언트의 주소로 변경
+    credentials: true,
+  })
+);
 app.use(
   session({
     secret: "your-secret-key",

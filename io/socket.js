@@ -5,6 +5,15 @@ const { Op } = require("sequelize");
 let io;
 /** TODO: TRY-CATCH 로 안꺼지게 */
 /** TODO: REDIS 로 MQ 구성 후 --> BATCH */
+/**
+ *
+ * @event sendMessage
+ * redis MessageQueue 내부에 저장
+ * @event disconnect
+ * disconnection 되었을 떄 전문 저장
+ * @event interval
+ * interval로 MessageQueue Batch 처리
+ */
 const init = (server) => {
   io = socketIo(server);
 
