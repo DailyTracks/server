@@ -24,6 +24,7 @@ passport.deserializeUser(async (id, done) => {
     const user = await users.findByPk(id);
 
     if (!user) throw new Error("User not found");
+    console.log(user);
     logger.info(`user deserialized: ${user.email}`);
     return done(null, user);
   } catch (err) {
