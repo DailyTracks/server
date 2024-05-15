@@ -4,6 +4,7 @@ const { users, profiles } = require("../models");
 const NaverStrategy = require("passport-naver-v2").Strategy;
 const KakaoStrategy = require("passport-kakao").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
+/** 가입 시 비밀번호 bcryto */
 module.exports = {
   local: new LocalStrategy(
     {

@@ -6,7 +6,14 @@ let io;
 let messageQueue;
 
 const init = (server) => {
-  io = socketIo(server);
+  io = socketIo(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["my-custom-header"],
+      credentials: true,
+    },
+  });
   messageQueue = new Queue("messages");
 
   io.on("connection", (socket) => {

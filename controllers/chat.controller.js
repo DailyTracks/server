@@ -3,7 +3,7 @@ const chatService = require("../services/chat.service");
 class ChatController {
   async getChatRoom(req, res, next) {
     try {
-      const id = 1;
+      const id = req.user.id;
       const chatrooms = await chatService.getChatRoom(id);
       res.status(200).json(chatrooms);
     } catch (err) {
