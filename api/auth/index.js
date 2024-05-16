@@ -77,7 +77,7 @@ router.post(
   passport.authenticate("local"),
   (req, res) => {
     // 로그인이 성공하면 클라이언트에게 성공 메시지를 보냅니다.
-    res.status(200).json({ message: "로그인 성공" });
+    res.status(200).json({ message: "로그인 성공", user: req.user });
   },
   (err, req, res, next) => {
     if (err) {
