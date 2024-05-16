@@ -4,6 +4,12 @@ class BoardService {
     const foundBoards = await boards.findAll();
     return foundBoards;
   }
+  async getBoardUidByBid(bid) {
+    const board = await boards.findOne({
+      where: { id: bid },
+    });
+    return board.user_id;
+  }
   async getBoardById(id) {
     const board = await boards.findOne({
       where: { id },

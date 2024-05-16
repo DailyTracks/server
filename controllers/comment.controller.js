@@ -13,7 +13,10 @@ class CommentController {
   }
   async createComment(req, res, next) {
     try {
-      const comment = await commentService.createComment(req.body);
+      const comment = await commentService.createComment({
+        ...req.body,
+        user_id: req.user.id,
+      });
       res.status(201).json(comment);
     } catch (err) {
       next(err);
@@ -23,7 +26,12 @@ class CommentController {
   async updateComment(req, res, next) {
     try {
       const id = req.params.id;
-      const comment = await commentService.updateComment(id, req.body);
+      if ((await commentService.getCommnetUidByCid(id)) !== req.user.id)
+        throw new Error("permission denied");
+      const comment = await commentService.updateComment(id, {
+        ...req.body,
+        user_id: req.user.id,
+      });
       res.status(200).json(comment);
     } catch (err) {
       next(err);
@@ -33,6 +41,8 @@ class CommentController {
   async deleteComment(req, res, next) {
     try {
       const id = req.params.id;
+      if ((await commentService.getCommnetUidByCid(id)) !== req.user.id)
+        throw new Error("permission denied");
       const comment = await commentService.deleteComment(id);
       res.status(200).json(comment);
     } catch (err) {

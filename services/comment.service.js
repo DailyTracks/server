@@ -13,9 +13,20 @@ class CommentService {
       throw err;
     }
   }
+  async getCommnetUidByCid(cid) {
+    try {
+      const _comments = await comments.findAll({
+        where: {
+          id: cid,
+        },
+      });
+      return _comments.user_id;
+    } catch (err) {
+      throw err;
+    }
+  }
   async createComment(comment) {
     try {
-      
       const _comment = await comments.create(comment);
       return _comment;
     } catch (err) {
