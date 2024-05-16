@@ -9,6 +9,17 @@ class UserController {
       next(err);
     }
   }
+  async isFollowUser(req, res, next) {
+    try {
+      const { userId, targetUserId } = req.query;
+      console.log(userId, targetUserId);
+      const isFollow = !(await userService.isSameGroup(userId, targetUserId));
+      console.log(isFollow);
+      res.status(200).json({ isFollow: isFollow });
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async getUser(req, res, next) {
     try {
