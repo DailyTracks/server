@@ -70,7 +70,7 @@ class BoardController {
   async updateBoard(req, res, next) {
     try {
       const id = req.params.id;
-      if ((await boardService.getBoardById(id)) !== req.user.id)
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
         throw new Error("permission denied");
       const board = await boardService.updateBoard(id, {
         ...req.body,
@@ -84,9 +84,21 @@ class BoardController {
   async deleteBoard(req, res, next) {
     try {
       const id = req.params.id;
-      if ((await boardService.getBoardById(id)) !== req.user.id)
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
         throw new Error("permission denied");
       const board = await boardService.deleteBoard(id);
+      res.status(200).json(board);
+    } catch (err) {
+      next(err);
+    }
+  }
+  async likeBoard(req, res, next) {
+    try {
+      const id = req.params.id;
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
+        throw new Error("permission denied");
+
+      const board = await boardService.likeBoard(id, req.user.id, req.method);
       res.status(200).json(board);
     } catch (err) {
       next(err);

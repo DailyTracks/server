@@ -168,6 +168,19 @@ class BoardService {
     const countBoards = await boards.count();
     return countBoards;
   }
+  async likeBoard(id, uid, type) {
+    if (type == "POST" || type == "post")
+      return await this.processLikeBoard(id, uid);
+    else return await this.cancelLikeBoard(id, uid);
+  }
+  async processLikeBoard(id, uid) {
+    return await board_like.create({ bid: id, uid: uid });
+  }
+  async cancelLikeBoard(id, uid) {
+    return await board_like.destroy({
+      where: { bid: id, uid: uid },
+    });
+  }
 }
 
 module.exports = new BoardService();
