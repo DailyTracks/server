@@ -5,8 +5,15 @@ class BoardController {
     try {
       const { region } = req.query;
       let boards = null;
-      if (region) boards = await boardService.getBoardByLocation(region);
-      else boards = await boardService.getBoards();
+      /**
+       * recent
+       * like
+       * view
+       */
+      const type = req.query.type || "recent";
+
+      if (region) boards = await boardService.getBoardByLocation(region, type);
+      else boards = await boardService.getBoards(type);
 
       res.status(200).json(boards);
     } catch (err) {
