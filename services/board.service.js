@@ -12,6 +12,12 @@ const searchMethod = {
   view: [[literal("hit_count"), "DESC"]],
 };
 class BoardService {
+  async getBoardUidByBid(bid) {
+    const board = await boards.findOne({
+      where: { id: bid },
+    });
+    return board.user_id;
+  }
   async getBoards(type) {
     const foundBoards = await boards.findAll({
       attributes: [
@@ -19,6 +25,8 @@ class BoardService {
         "title",
         "content",
         "region",
+        [col("user.username"), "author"],
+
         "createdAt",
         "updatedAt",
         [literal("COUNT(DISTINCT board_likes.bid)"), "like_count"],
@@ -35,6 +43,11 @@ class BoardService {
           as: "board_hits",
           attributes: [],
         },
+        {
+          model: users,
+          as: "user",
+          attributes: [],
+        },
       ],
       group: ["boards.id"],
       order: searchMethod[type],
@@ -44,21 +57,64 @@ class BoardService {
   }
   async getBoardById(id) {
     const board = await boards.findOne({
+      attributes: [
+        "id",
+        "title",
+        "content",
+        "region",
+        [col("user.username"), "author"],
+        "createdAt",
+        "updatedAt",
+        [literal("COUNT(DISTINCT board_likes.bid)"), "like_count"],
+        [literal("SUM(hit_count)"), "hit_count"],
+      ],
       where: { id },
       include: [
         {
-          model: comments,
-          as: "comments",
-          attributes: ["id", "user_id", "content", "createdAt"],
-          include: {
-            model: users,
-            as: "user",
-            attributes: ["username"],
-          },
+          model: board_like,
+          as: "board_likes",
+          attributes: [],
+        },
+        {
+          model: board_hit,
+          as: "board_hits",
+          attributes: [],
+        },
+        {
+          model: users,
+          as: "user",
+          attributes: [],
         },
       ],
+
+      group: ["boards.id"],
     });
-    return board;
+    const comment = await comments.findAll({
+      attributes: [
+        "id",
+        "content",
+        "createdAt",
+        "updatedAt",
+        [col("user.username"), "author"],
+      ],
+      where: {
+        board_id: id,
+      },
+      include: {
+        model: users,
+        as: "user",
+        attributes: [],
+      },
+    });
+    return { board, comments: comment };
+  }
+  async getGeoStatus() {
+    const foundBoardStatus = await boards.findAll({
+      attributes: ["region", [fn("COUNT", col("region")), "regionCount"]],
+      group: ["region"],
+      order: [[literal("regionCount"), "DESC"]],
+    });
+    return foundBoardStatus;
   }
   async getBoardByLocation(region, type) {
     console.log(region);
