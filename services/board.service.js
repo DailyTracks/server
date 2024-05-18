@@ -1,8 +1,17 @@
+const { fn, col, literal } = require("sequelize");
 const { boards, comments, users } = require("../models/index");
 class BoardService {
   async getBoards() {
     const foundBoards = await boards.findAll();
     return foundBoards;
+  }
+  async getGeoStatus() {
+    const foundBoardStatus = await boards.findAll({
+      attributes: ["region", [fn("COUNT", col("region")), "regionCount"]],
+      group: ["region"],
+      order: [[literal("regionCount"), "DESC"]],
+    });
+    return foundBoardStatus;
   }
   async getBoardUidByBid(bid) {
     const board = await boards.findOne({
