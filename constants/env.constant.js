@@ -3,7 +3,7 @@ dotenv.config();
 
 module.exports = {
   SERVER: {
-    PORT: process.env.PORT || 8081,
+    PORT: process.env.SERVER_PORT || 8080,
   },
   DB: {
     DIALECT: process.env.DB_DIALECT,

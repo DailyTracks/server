@@ -63,6 +63,7 @@ class BoardService {
         "content",
         "region",
         [col("user.username"), "author"],
+        [col("user.id"), "author_id"],
         "createdAt",
         "updatedAt",
         [literal("COUNT(DISTINCT board_likes.bid)"), "like_count"],

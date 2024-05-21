@@ -12,11 +12,15 @@ module.exports = {
       passwordField: "password",
     },
     async (userId, password, done) => {
+	    console.log(userId);
+	    console.log(password);
       const user = await users.findOne({ where: { email: userId } });
       if (!user) {
         return done({ msg: "존재하지 않는 계정입니다.", code: -1 }, null);
       }
+
       const profile = await profiles.findOne({ where: { id: user.id } });
+	    console.log(profile);
       if (profile.password !== password) {
         return done({ msg: "비밀번호가 일치하지 않습니다.", code: -1 }, null);
       }
@@ -26,7 +30,7 @@ module.exports = {
   kakao: new KakaoStrategy(
     {
       clientID: "0b145b1b256b7e857eadda16ec534691",
-      callbackURL: "http://localhost:8080/api/auth/join/kakao/callback",
+      callbackURL: "http://3.34.226.107:8080/api/auth/join/kakao/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       console.log(profile);
@@ -54,7 +58,7 @@ module.exports = {
     {
       clientID: "YrRexsBUtY3GwezYfvpX",
       clientSecret: "OOpNaPgjXX",
-      callbackURL: "http://localhost:8080/api/auth/join/naver/callback",
+      callbackURL: "http://3.34.226.107:8080/api/auth/join/naver/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       console.log(profile);
