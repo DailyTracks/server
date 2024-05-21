@@ -1,14 +1,48 @@
 const boardService = require("../services/board.service");
-
+const geoInfo = [
+  "충청북도",
+  "강원도",
+  "경기도",
+  "경상남도",
+  "경상북도",
+  "광주광역시",
+  "대구광역시",
+  "대전광역시",
+  "부산광역시",
+  "서울특별시",
+  "세종특별시",
+  "울산광역시",
+  "인천광역시",
+  "전라남도",
+  "전라북도",
+  "제주특별자치도",
+  "충청남도",
+];
 class BoardController {
   async getBoards(req, res, next) {
     try {
       const { region } = req.query;
       let boards = null;
-      if (region) boards = await boardService.getBoardByLocation(region);
-      else boards = await boardService.getBoards();
+      /**
+       * recent
+       * like
+       * view
+       */
+      const type = req.query.type || "recent";
+
+      if (region) boards = await boardService.getBoardByLocation(region, type);
+      else boards = await boardService.getBoards(type);
 
       res.status(200).json(boards);
+    } catch (err) {
+      next(err);
+    }
+  }
+  async getGeoStatus(req, res, next) {
+    try {
+      const result = await boardService.getGeoStatus();
+      console.log(result);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
@@ -24,7 +58,10 @@ class BoardController {
   }
   async createBoard(req, res, next) {
     try {
-      const board = await boardService.createBoard(req.body);
+      const board = await boardService.createBoard({
+        ...req.body,
+        user_id: req.user.id,
+      });
       res.status(201).json(board);
     } catch (err) {
       next(err);
@@ -33,7 +70,12 @@ class BoardController {
   async updateBoard(req, res, next) {
     try {
       const id = req.params.id;
-      const board = await boardService.updateBoard(id, req.body);
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
+        throw new Error("permission denied");
+      const board = await boardService.updateBoard(id, {
+        ...req.body,
+        user_id: req.user.id,
+      });
       res.status(200).json(board);
     } catch (err) {
       next(err);
@@ -42,7 +84,21 @@ class BoardController {
   async deleteBoard(req, res, next) {
     try {
       const id = req.params.id;
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
+        throw new Error("permission denied");
       const board = await boardService.deleteBoard(id);
+      res.status(200).json(board);
+    } catch (err) {
+      next(err);
+    }
+  }
+  async likeBoard(req, res, next) {
+    try {
+      const id = req.params.id;
+      if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
+        throw new Error("permission denied");
+
+      const board = await boardService.likeBoard(id, req.user.id, req.method);
       res.status(200).json(board);
     } catch (err) {
       next(err);

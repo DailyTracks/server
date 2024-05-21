@@ -76,6 +76,17 @@ class UserService {
   async isSameGroup(userId1, userId2) {
     return (await this.findRoot(userId1)) === (await this.findRoot(userId2));
   }
+
+  async isFollow(userId1, userId2) {
+    const follow = await follows.findOne({
+      where: {
+        followee_id: userId2,
+        follower_id: userId1,
+      },
+    });
+
+    return !!follow;
+  }
 }
 
 module.exports = new UserService();

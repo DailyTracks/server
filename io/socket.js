@@ -1,63 +1,66 @@
 const socketIo = require("socket.io");
-const { chatrooms, messages, users } = require("../models");
-const { Op } = require("sequelize");
+const { messages } = require("../models");
+const Queue = require("bull");
 
 let io;
-/** TODO: TRY-CATCH 로 안꺼지게 */
-/** TODO: REDIS 로 MQ 구성 후 --> BATCH */
-/**
- *
- * @event sendMessage
- * redis MessageQueue 내부에 저장
- * @event disconnect
- * disconnection 되었을 떄 전문 저장
- * @event interval
- * interval로 MessageQueue Batch 처리
- */
+let messageQueue;
+
 const init = (server) => {
-  io = socketIo(server);
+  io = socketIo(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["my-custom-header"],
+      credentials: true,
+    },
+  });
+  messageQueue = new Queue("messages");
 
   io.on("connection", (socket) => {
     console.log("User connected");
 
-    socket.on("joinRoom", async ({ id, roomId }) => {
+    socket.on("joinRoom", async ({ roomId }) => {
       socket.join(roomId);
-      const getMessages = await chatrooms.findAll({
-        where: {
-          [Op.or]: [{ user1_id: id }, { user2_id: id }],
-          room_id: roomId,
-        },
-        include: [
-          {
-            model: users,
-            as: "user1",
-          },
-          {
-            model: users,
-            as: "user2",
-          },
-          {
-            model: messages,
-            as: "messages",
-          },
-        ],
-      });
-      socket.emit("messages", getMessages);
+      try {
+        const getMessages = await messages.findAll({
+          where: { room_id: roomId },
+        });
+        socket.emit("messages", getMessages);
+      } catch (error) {
+        console.error("Error fetching messages: ", error);
+      }
     });
 
     socket.on("sendMessage", async ({ roomId, writer, message }) => {
-      const newMessage = await messages.create({
-        room_id: roomId,
-        writer: writer,
-        message: message,
-        sent_time: new Date().toISOString(),
-      });
-      io.to(roomId).emit("message", newMessage);
+      try {
+        // 메시지를 메시지 큐에 추가
+        await messageQueue.add("sendMessage", { roomId, writer, message });
+
+        // 실시간으로 전달
+        io.to(roomId).emit("message", { writer, message });
+      } catch (error) {
+        console.error("Error sending message: ", error);
+      }
     });
 
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
+  });
+
+  // 메시지 큐 주기적으로 처리
+  messageQueue.process("sendMessage", async (job) => {
+    const { roomId, writer, message } = job.data;
+    try {
+      // 데이터베이스에 메시지 저장
+      await messages.create({
+        room_id: roomId,
+        writer: writer,
+        message: message,
+      });
+    } catch (error) {
+      console.error("Error saving message to database: ", error);
+    }
   });
 };
 

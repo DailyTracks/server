@@ -1,4 +1,6 @@
 var DataTypes = require("sequelize").DataTypes;
+var _board_hit = require("./board_hit");
+var _board_like = require("./board_like");
 var _boards = require("./boards");
 var _chatrooms = require("./chatrooms");
 var _comments = require("./comments");
@@ -8,6 +10,8 @@ var _profiles = require("./profiles");
 var _users = require("./users");
 
 function initModels(sequelize) {
+  var board_hit = _board_hit(sequelize, DataTypes);
+  var board_like = _board_like(sequelize, DataTypes);
   var boards = _boards(sequelize, DataTypes);
   var chatrooms = _chatrooms(sequelize, DataTypes);
   var comments = _comments(sequelize, DataTypes);
@@ -16,10 +20,16 @@ function initModels(sequelize) {
   var profiles = _profiles(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
+  board_hit.belongsTo(boards, { as: "bid_board", foreignKey: "bid"});
+  boards.hasMany(board_hit, { as: "board_hits", foreignKey: "bid"});
+  board_like.belongsTo(boards, { as: "bid_board", foreignKey: "bid"});
+  boards.hasMany(board_like, { as: "board_likes", foreignKey: "bid"});
   comments.belongsTo(boards, { as: "board", foreignKey: "board_id"});
   boards.hasMany(comments, { as: "comments", foreignKey: "board_id"});
   messages.belongsTo(chatrooms, { as: "room", foreignKey: "room_id"});
   chatrooms.hasMany(messages, { as: "messages", foreignKey: "room_id"});
+  board_like.belongsTo(users, { as: "uid_user", foreignKey: "uid"});
+  users.hasMany(board_like, { as: "board_likes", foreignKey: "uid"});
   boards.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(boards, { as: "boards", foreignKey: "user_id"});
   chatrooms.belongsTo(users, { as: "user1", foreignKey: "user1_id"});
@@ -38,6 +48,8 @@ function initModels(sequelize) {
   users.hasMany(profiles, { as: "profiles", foreignKey: "id"});
 
   return {
+    board_hit,
+    board_like,
     boards,
     chatrooms,
     comments,

@@ -9,6 +9,17 @@ class UserController {
       next(err);
     }
   }
+  async isFollowUser(req, res, next) {
+    try {
+      const { userId, targetUserId } = req.query;
+      console.log(userId, targetUserId);
+      const isFollow = await userService.isFollow(userId, targetUserId);
+      console.log(isFollow);
+      res.status(200).json({ isFollow: isFollow });
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async getUser(req, res, next) {
     try {
@@ -50,6 +61,8 @@ class UserController {
     try {
       const userId = req.params.id;
       const targetUserId = req.query.targetUserId;
+      if (userId === targetUserId)
+        throw new Error("자기 자신에게 팔로우를 할 수 없습니다");
       await userService.followUser(userId, targetUserId);
       res.status(200).send("Successfully followed user.");
     } catch (err) {

@@ -21,9 +21,11 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     // 세션에 저장된 사용자 ID를 사용하여 사용자를 찾아냅니다.
+	console.log("dd",id);
     const user = await users.findByPk(id);
 
     if (!user) throw new Error("User not found");
+    console.log(user);
     logger.info(`user deserialized: ${user.email}`);
     return done(null, user);
   } catch (err) {
@@ -48,7 +50,8 @@ router.get(
   "/join/naver/callback",
   passport.authenticate("naver", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:3000/auth?mode=signup");
+	const {username,id, email, oauth_provider} = req.user;
+    res.redirect(`http://localhost:3000/auth?mode=signup&id=${id}&email=${email}&provider=${oauth_provider}&username=${username}`);
   },
   (err, req, res, next) => {
     if (err) {
@@ -76,7 +79,7 @@ router.post(
   passport.authenticate("local"),
   (req, res) => {
     // 로그인이 성공하면 클라이언트에게 성공 메시지를 보냅니다.
-    res.status(200).json({ message: "로그인 성공" });
+    res.status(200).json({ message: "로그인 성공", user: req.user });
   },
   (err, req, res, next) => {
     if (err) {

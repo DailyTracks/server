@@ -1,6 +1,18 @@
 const { comments } = require("../models");
 
 class CommentService {
+  async getCommentUidByCid(cid) {
+    try {
+      const _comments = await comments.findAll({
+        where: {
+          id: cid,
+        },
+      });
+      return _comments.user_id;
+    } catch (err) {
+      throw err;
+    }
+  }
   async getComments(boardId) {
     try {
       const _comments = await comments.findAll({
@@ -15,7 +27,6 @@ class CommentService {
   }
   async createComment(comment) {
     try {
-      
       const _comment = await comments.create(comment);
       return _comment;
     } catch (err) {

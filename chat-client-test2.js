@@ -9,8 +9,8 @@ const rl = readline.createInterface({
 });
 /** RommId Id를 DB에 있는 것으로  */
 
-const roomId = 4;
-const id = 4;
+const roomId = 1;
+const id = 3;
 socket.on("connect", () => {
   console.log("Connected to server");
 
