@@ -28,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use("/uploads", express.static("uploads"));
 app.use("/api", apiIndex);
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));

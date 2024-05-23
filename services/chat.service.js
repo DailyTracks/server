@@ -6,7 +6,7 @@ class ChatService {
     try {
       const foundChatrooms = await chatrooms.findAll({
         where: {
-          [Op.or]: [{ user1_id: id }, { user2_id: id }],
+          user1_id: id,
         },
         include: [
           {
@@ -68,10 +68,13 @@ class ChatService {
         },
       });
       if (chatroom) throw new Error("already exists chat room");
-      const newChatroom = await chatrooms.create({
-        user1_id: id,
-        user2_id: targetId,
-      });
+      const newChatroom = await chatrooms.bulkCreate([
+        {
+          user1_id: id,
+          user2_id: targetId,
+        },
+        { user1_id: targetId, user2_id: id },
+      ]);
       return newChatroom;
     } catch (err) {
       throw err;

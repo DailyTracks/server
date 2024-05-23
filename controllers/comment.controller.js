@@ -41,6 +41,8 @@ class CommentController {
   async deleteComment(req, res, next) {
     try {
       const id = req.params.id;
+      if ((await commentService.getCommentUidByCid(id)) !== req.user.id)
+        throw new Error("permission denied");
       const comment = await commentService.deleteComment(id);
       res.status(200).json(comment);
     } catch (err) {
