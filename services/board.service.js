@@ -8,8 +8,14 @@ const {
 } = require("../models/index");
 const searchMethod = {
   recent: [[literal("createdAt"), "DESC"]],
-  like: [[literal("like_count"), "DESC"]],
-  view: [[literal("hit_count"), "DESC"]],
+  like: [
+    [literal("like_count"), "DESC"],
+    [literal("createdAt"), "DESC"], // createdAt을 추가합니다.
+  ],
+  view: [
+    [literal("hit_count"), "DESC"],
+    [literal("createdAt"), "DESC"], // createdAt을 추가합니다.
+  ],
 };
 class BoardService {
   async getBoardUidByBid(bid) {
@@ -174,7 +180,8 @@ class BoardService {
     return newBoard;
   }
   async updateBoard(id, board) {
-    const updatedBoard = await boards.update(board, { where: { id } });
+    console.log("asd", board);
+    const updatedBoard = await boards.update(board, { where: { id: id } });
     return updatedBoard;
   }
   async deleteBoard(id) {

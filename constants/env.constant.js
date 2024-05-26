@@ -28,4 +28,9 @@ module.exports = {
       CALLBACK_URL: process.env.STRATEGY_NAVER_CALLBACK_URL,
     },
   },
+  MAP: {
+    GOOGLE: {
+      API_KEY: process.env.MAP_GOOGLE_API_KEY,
+    },
+  },
 };

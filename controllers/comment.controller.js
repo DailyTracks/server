@@ -26,7 +26,12 @@ class CommentController {
   async updateComment(req, res, next) {
     try {
       const id = req.params.id;
-      if ((await commentService.getCommentUidByCid(id)) !== req.user.id)
+      console.log(await commentService.getCommentUidByCid(id));
+
+      if (
+        parseInt(await commentService.getCommentUidByCid(id)) !==
+        parseInt(req.user.id)
+      )
         throw new Error("permission denied");
       const comment = await commentService.updateComment(id, {
         ...req.body,
@@ -41,7 +46,10 @@ class CommentController {
   async deleteComment(req, res, next) {
     try {
       const id = req.params.id;
-      if ((await commentService.getCommentUidByCid(id)) !== req.user.id)
+      if (
+        parseInt(await commentService.getCommentUidByCid(id)) !==
+        parseInt(req.user.id)
+      )
         throw new Error("permission denied");
       const comment = await commentService.deleteComment(id);
       res.status(200).json(comment);
