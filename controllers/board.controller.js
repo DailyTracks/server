@@ -18,6 +18,9 @@ const geoInfo = [
   "제주특별자치도",
   "충청남도",
 ];
+/**
+ * 조회수 , 지도의 hot place 에 따라 가중치 계산 알고리즘
+ */
 class BoardController {
   async getBoards(req, res, next) {
     try {
@@ -59,9 +62,25 @@ class BoardController {
   async createBoard(req, res, next) {
     try {
       const files = [];
-      req.files.map((file) => {
-        files.push(`/${file.destination}${file.filename}`);
-      });
+      let region = null;
+      if (!req.imgData) {
+        req.files.map((file) => {
+          files.push(`/${file.destination}${file.filename}`);
+        });
+        region = req.body.region;
+      } else {
+        req.imgData.map((data) => {
+          files.push(data);
+        });
+        for (let i = 0; i < req.address.length; i++) {
+          if (req.address[i]) {
+            region = req.address[i];
+            break;
+          }
+        }
+      }
+      if (!region) throw new Error({ error: 2, msg: "region plz" });
+
       const { content, ...rest } = req.body;
       const stringifyContent = JSON.stringify({
         images: files,
@@ -72,6 +91,7 @@ class BoardController {
           content: stringifyContent,
           ...rest,
         },
+        region: region,
         user_id: req.user.id,
       });
       res.status(201).json(board);

@@ -8,7 +8,7 @@ class CommentService {
           id: cid,
         },
       });
-      return _comments.user_id;
+      return _comments[0].dataValues.user_id;
     } catch (err) {
       throw err;
     }
@@ -34,9 +34,10 @@ class CommentService {
     }
   }
 
-  async updateComment(comment) {
+  async updateComment(id, comment) {
     try {
-      const _comment = await comments.update(comment);
+      console.log(comment);
+      const _comment = await comments.update(comment, { where: { id } });
       return _comment;
     } catch (err) {
       throw err;
