@@ -8,22 +8,20 @@ const session = require("express-session");
 const passport = require("passport");
 app.use(
   cors({
-    origin: "http://localhost:3000", // 클라이언트의 주소로 변경
+    exposedHeaders: ["Authorization"],
+    sameSite: "none",
+    origin: true,
     credentials: true,
   })
 );
 app.use(
   session({
-    secret: "your-secret-key",
+    secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      //1hour about expire time
-      maxAge: 1000 * 60 * 60,
-    },
+    cookie: { secure: false },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());

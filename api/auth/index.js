@@ -21,6 +21,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     // 세션에 저장된 사용자 ID를 사용하여 사용자를 찾아냅니다.
+	console.log("dd",id);
     const user = await users.findByPk(id);
 
     if (!user) throw new Error("User not found");
@@ -49,7 +50,8 @@ router.get(
   "/join/naver/callback",
   passport.authenticate("naver", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("http://localhost:3000/auth?mode=signup");
+	const {username,id, email, oauth_provider} = req.user;
+    res.redirect(`http://localhost:3000/auth?mode=signup&id=${id}&email=${email}&provider=${oauth_provider}&username=${username}`);
   },
   (err, req, res, next) => {
     if (err) {
