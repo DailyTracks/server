@@ -81,11 +81,22 @@ class BoardController {
   }
   async updateBoard(req, res, next) {
     try {
+      const files = [];
+      req.files.map((file) => {
+        files.push(`/${file.destination}${file.filename}`);
+      });
+      const { content, ...rest } = req.body;
+      const stringifyContent = JSON.stringify({
+        images: files,
+        content: content,
+      });
       const id = req.params.id;
       if ((await boardService.getBoardUidByBid(id)) !== req.user.id)
         throw new Error("permission denied");
       const board = await boardService.updateBoard(id, {
-        ...req.body,
+        ...{
+          content: stringifyContent,
+          ...rest},
         user_id: req.user.id,
       });
       res.status(200).json(board);

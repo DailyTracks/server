@@ -1,6 +1,36 @@
 const { users, follows, profiles } = require("../models/index");
+class UnionFind {
+  constructor(size) {
+    this.parent = new Array(size).fill(-1);
+  }
+
+find(x) {
+  let root = x;
+  while (this.parent[root] >= 0) {
+    root = this.parent[root];
+  }
+  while (x !== root) {
+    let next = this.parent[x];
+    this.parent[x] = root;
+    x = next;
+  }
+  return root;
+}
+
+  union(x, y) {
+    let rootX = this.find(x);
+    let rootY = this.find(y);
+    if (rootX !== rootY) {
+      this.parent[rootY] = rootX;
+    }
+  }
+}
 
 class UserService {
+  constructor() {
+    this.unionFind = new UnionFind(users.length);
+  }
+
   async getUsers() {
     return await users.findAll();
   }
@@ -26,32 +56,31 @@ class UserService {
       follower_id: followerId,
       followee_id: followeeId,
     });
+    this.unionFind.union(followerId, followeeId);
     return follow;
   }
 
   async unFollowUser(followerId, followeeId) {
-    return await follows.destroy({
+    await follows.destroy({
       where: { follower_id: followerId, followee_id: followeeId },
     });
   }
 
   async getFollower(userId) {
-    const rootUserId = await this.findRoot(userId);
+    const rootUserId = this.unionFind.find(userId);
     const followers = await follows.findAll({
       where: { followee_id: rootUserId },
-
       include: {
         model: users,
         as: "follower",
-
         attributes: ["id", "username", "email"],
       },
     });
-    return followers;
+    return followers.map((follow) => follow.follower);
   }
 
   async getFollowing(userId) {
-    const rootUserId = await this.findRoot(userId);
+    const rootUserId = this.unionFind.find(userId);
     const following = await follows.findAll({
       where: { follower_id: rootUserId },
       include: {
@@ -60,21 +89,7 @@ class UserService {
         attributes: ["id", "username", "email"],
       },
     });
-    return following;
-  }
-
-  async findRoot(userId) {
-    let rootUserId = userId;
-    let follow = await follows.findOne({ where: { followee_id: rootUserId } });
-    while (follow) {
-      rootUserId = follow.follower_id;
-      follow = await follows.findOne({ where: { followee_id: rootUserId } });
-    }
-    return rootUserId;
-  }
-
-  async isSameGroup(userId1, userId2) {
-    return (await this.findRoot(userId1)) === (await this.findRoot(userId2));
+    return following.map((follow) => follow.followee);
   }
 
   async isFollow(userId1, userId2) {
@@ -90,3 +105,4 @@ class UserService {
 }
 
 module.exports = new UserService();
+

@@ -15,7 +15,7 @@ const sequelize = new Sequelize(
   {
     ...dbConfig,
     /**login 처리 부분 */
-    // logging: false,
+  //  logging: false,
   }
 );
 

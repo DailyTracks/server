@@ -2,6 +2,7 @@ const multer = require("multer");
 const storage = require("../../configs/multer.config");
 const boardController = require("../../controllers/board.controller");
 const guardMiddleware = require("../../middlewares/guard.middleware");
+const geoParseMiddleware = require("../../middlewares/geo-parse.middleware");
 
 const router = require("express").Router();
 
@@ -15,9 +16,11 @@ router.post(
   "/",
   guardMiddleware,
   upload.array("images", 5),
+  geoParseMiddleware,
   boardController.createBoard
 );
 router.put("/:id", guardMiddleware, boardController.updateBoard);
 router.delete("/:id", guardMiddleware, boardController.deleteBoard);
 
 module.exports = router;
+

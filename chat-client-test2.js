@@ -1,7 +1,7 @@
 // client.js
 const readline = require("readline");
 const io = require("socket.io-client");
-const socket = io("http://localhost:8080");
+const socket = io("http://3.34.226.107:8080");
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -9,8 +9,8 @@ const rl = readline.createInterface({
 });
 /** RommId Id를 DB에 있는 것으로  */
 
-const roomId = 1;
-const id = 3;
+const roomId = 6;
+const id = 2;
 socket.on("connect", () => {
   console.log("Connected to server");
 
