@@ -18,6 +18,14 @@ class BoardService {
     });
     return board.user_id;
   }
+  async parseBoard(board) {
+    const { content, ...rest } = board;
+    const parsedContent = JSON.parse(content); // content 값을 JSON으로 파싱
+    return {
+      content: parsedContent, // 파싱된 content를 새로운 객체에 포함시킴
+      ...rest,
+    };
+  }
   async getBoards(type) {
     const foundBoards = await boards.findAll({
       attributes: [
@@ -53,8 +61,14 @@ class BoardService {
       order: searchMethod[type],
     });
 
-    return foundBoards;
+    const parsedBoards = await Promise.all(
+      foundBoards.map(async (board) => {
+        return await this.parseBoard(board.dataValues);
+      })
+    );
+    return parsedBoards;
   }
+
   async getBoardById(id) {
     const board = await boards.findOne({
       attributes: [
@@ -106,7 +120,8 @@ class BoardService {
         attributes: [],
       },
     });
-    return { board, comments: comment };
+    const parsedBoard = await this.parseBoard(board.dataValues);
+    return { ...parsedBoard, comments: comment };
   }
   async getGeoStatus() {
     const foundBoardStatus = await boards.findAll({
@@ -118,7 +133,7 @@ class BoardService {
   }
   async getBoardByLocation(region, type) {
     console.log(region);
-    const board = await boards.findAll({
+    const foundBoards = await boards.findAll({
       attributes: [
         "id",
         "title",
@@ -145,7 +160,12 @@ class BoardService {
       where: { region: region },
       order: searchMethod[type],
     });
-    return board;
+    const parsedBoards = await Promise.all(
+      foundBoards.map(async (board) => {
+        return await this.parseBoard(board.dataValues);
+      })
+    );
+    return parsedBoards;
   }
   async createBoard(board) {
     const newBoard = await boards.create(board);

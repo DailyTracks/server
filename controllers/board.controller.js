@@ -58,8 +58,20 @@ class BoardController {
   }
   async createBoard(req, res, next) {
     try {
+      const files = [];
+      req.files.map((file) => {
+        files.push(`/${file.destination}${file.filename}`);
+      });
+      const { content, ...rest } = req.body;
+      const stringifyContent = JSON.stringify({
+        images: files,
+        content: content,
+      });
       const board = await boardService.createBoard({
-        ...req.body,
+        ...{
+          content: stringifyContent,
+          ...rest,
+        },
         user_id: req.user.id,
       });
       res.status(201).json(board);
