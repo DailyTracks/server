@@ -9,6 +9,6 @@ router.get("/", guardMiddleware, chatController.getChatRoom);
 router.get("/:roomId/messages", chatController.getMessagesByRoomId);
 
 /**채팅방 만들기 */
-router.post("/:targetId", chatController.joinChatRoom);
+router.post("/:targetId", guardMiddleware,chatController.joinChatRoom);
 
 module.exports = router;

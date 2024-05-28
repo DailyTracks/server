@@ -177,6 +177,7 @@ class BoardService {
     return parsedBoards;
   }
   async createBoard(board) {
+	  console.log(board);
     const newBoard = await boards.create(board);
     await board_hit.create({ bid: newBoard.id });
     return newBoard;

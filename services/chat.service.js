@@ -21,7 +21,40 @@ class ChatService {
           },
         ],
       });
-      return foundChatrooms;
+      const foundChatrooms_2 = await chatrooms.findAll({
+        where: {
+          user2_id: id,
+        },
+        include: [
+          {
+            model: users,
+            as: "user1",
+            attributes: ["username"],
+          },
+          {
+            model: users,
+            as: "user2",
+            attributes: ["username"],
+          },
+        ],
+      });
+	    const returnChatrooms = foundChatrooms.map(chatroom => {
+  return chatroom;
+});
+
+foundChatrooms_2.forEach(chatroom => {
+  const temp = chatroom.user1_id;
+  chatroom.user1_id = chatroom.user2_id;
+  chatroom.user2_id = temp;
+   const temp2 = chatroom.user1.username;
+  chatroom.user1.username = chatroom.user2.username;
+chatroom.user2.username = temp2;
+
+  returnChatrooms.push(chatroom);
+});
+
+return returnChatrooms;
+
     } catch (err) {
       throw err;
     }
@@ -61,20 +94,17 @@ class ChatService {
       console.log(id, targetId);
       const chatroom = await chatrooms.findOne({
         where: {
-          [Op.or]: [
-            { [Op.and]: [{ user1_id: id }, { user2_id: targetId }] },
-            { [Op.and]: [{ user1_id: targetId }, { user2_id: id }] },
-          ],
+		user1_id:id,
+		user2_id:targetId
         },
       });
       if (chatroom) throw new Error("already exists chat room");
-      const newChatroom = await chatrooms.bulkCreate([
+     await chatrooms.create(
         {
-          user1_id: id,
-          user2_id: targetId,
+          user1_id: targetId,
+          user2_id: id,
         },
-        { user1_id: targetId, user2_id: id },
-      ]);
+      );
       return newChatroom;
     } catch (err) {
       throw err;

@@ -23,10 +23,10 @@ class ChatController {
 
   async joinChatRoom(req, res, next) {
     try {
-      const id = 1;
-      const { targetId } = parseInt(req.params);
-      console.log(targetId);
-      const messages = await chatService.joinChatRoom(id, targetId);
+
+      const id = req.user.id;
+      const { targetId } = req.params;
+      const messages = await chatService.joinChatRoom(id, parseInt(targetId));
       res.status(200).json(messages);
     } catch (err) {
       next(err);

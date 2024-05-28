@@ -38,30 +38,49 @@ class BoardController {
       next(err);
     }
   }
-  async getGeoStatus(req, res, next) {
-    try {
-      const result = await boardService.getGeoStatus();
-      console.log(result);
-      res.status(200).json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
   async getBoard(req, res, next) {
     try {
       const id = req.params.id;
-      const board = await boardService.getBoardById(id);
+      if(id ==="geo-status"){
+      const result = await boardService.getGeoStatus()
+      res.status(200).json(result);
+      }else{
+	    const board = await boardService.getBoardById(id);
       res.status(200).json(board);
-    } catch (err) {
+      }
+      } catch (err) {
       next(err);
     }
   }
-  async createBoard(req, res, next) {
+	async createBoard(req, res, next) {
     try {
+	    console.log(req.imgData)
       const files = [];
-      req.files.map((file) => {
-        files.push(`/${file.destination}${file.filename}`);
-      });
+      let region = null;
+      if (!req.imgData) {
+	      console.log(req.files);
+        req.files.map((file) => {
+          files.push(`/${file.destination}${file.filename}`);
+        });
+        region = req.body.region;
+	      console.log(region);
+      } else {
+        req.imgData.map((data) => {
+          files.push(data);
+        });
+	      console.log("add",req.address);
+        for (let i = 0; i < req.address.length; i++) {
+          if (req.address[i]) {
+            region = req.address[i];
+            break;
+          }
+        }
+      }
+	      console.log("region111",region);
+      if (!region){ 
+
+	      return res.status(400).json({err_code:-1, msg:"region plz"})
+      }
       const { content, ...rest } = req.body;
       const stringifyContent = JSON.stringify({
         images: files,
@@ -71,16 +90,19 @@ class BoardController {
         ...{
           content: stringifyContent,
           ...rest,
+        region: region,
         },
         user_id: req.user.id,
       });
-      res.status(201).json(board);
+	    console.log("aaa",board);
+      res.status(200).json(board.dataValues);
     } catch (err) {
       next(err);
     }
   }
   async updateBoard(req, res, next) {
     try {
+	   
       const files = [];
       req.files.map((file) => {
         files.push(`/${file.destination}${file.filename}`);
